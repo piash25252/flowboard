@@ -14,7 +14,7 @@ router.post('/', authenticate, requireRole('admin'), (req, res) => {
     if (!name || !email || !password || !role) return res.status(400).json({ error: 'All fields required' });
     if (db.get('SELECT id FROM users WHERE email=?', [email])) return res.status(409).json({ error: 'Email exists' });
     const hashed = bcrypt.hashSync(password, 10);
-    const r = db.run('INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)', [name, email, hashed, role]);
+    const r = db.run('INSERT INTO users (name, email, password, role, must_change_password) VALUES (?, ?, ?, ?)', [name, email, hashed, role, 1]);
     db.run('INSERT INTO activity_log (user_id, action, entity_type, entity_id, details) VALUES (?, ?, ?, ?, ?)', [req.user.id, 'Created user', 'user', r.lastID, `${name} (${role})`]);
     res.status(201).json({ id: r.lastID, name, email, role });
   } catch(e) { res.status(500).json({ error: e.message }); }

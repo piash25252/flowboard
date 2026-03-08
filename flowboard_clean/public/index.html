@@ -68,6 +68,7 @@
       </a>
     </nav>
     <div class="sidebar-footer">
+      <button class="btn-change-pw" id="change-pw-btn">🔒 Change Password</button>
       <button class="btn-logout" id="logout-btn">↩ Logout</button>
     </div>
   </aside>
@@ -316,6 +317,33 @@
     <div class="modal-footer">
       <button class="btn-ghost modal-cancel">Cancel</button>
       <button class="btn-primary" id="save-user-btn">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change Password Modal -->
+<div class="modal-overlay hidden" id="modal-change-password">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="change-pw-title">Change Password</h2>
+    </div>
+    <p id="change-pw-subtitle" class="login-sub" style="margin-bottom:20px"></p>
+    <div class="form-group">
+      <label>Current Password *</label>
+      <input type="password" id="cp-current" placeholder="••••••••" />
+    </div>
+    <div class="form-group">
+      <label>New Password *</label>
+      <input type="password" id="cp-new" placeholder="minimum 6 characters" />
+    </div>
+    <div class="form-group">
+      <label>Confirm New Password *</label>
+      <input type="password" id="cp-confirm" placeholder="••••••••" />
+    </div>
+    <div id="cp-error" class="error-msg hidden"></div>
+    <div class="modal-footer">
+      <button class="btn-ghost" id="cp-cancel-btn">Cancel</button>
+      <button class="btn-primary" id="save-password-btn">Save Password</button>
     </div>
   </div>
 </div>

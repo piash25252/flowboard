@@ -44,6 +44,10 @@ async function login() {
     state.user = data.user;
     localStorage.setItem('fb_token', data.token);
     showApp();
+    // Forced password change for new users
+    if (data.user.must_change_password) {
+      setTimeout(() => openChangePasswordModal(true), 500);
+    }
   } catch (e) {
     errEl.textContent = e.message;
     errEl.classList.remove('hidden');
@@ -66,6 +70,62 @@ function logout() {
   state.user = null;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-page').classList.remove('hidden');
+}
+
+// ========================
+// CHANGE PASSWORD
+// ========================
+function openChangePasswordModal(forced = false) {
+  const title = document.getElementById('change-pw-title');
+  const subtitle = document.getElementById('change-pw-subtitle');
+  const cancelBtn = document.getElementById('cp-cancel-btn');
+
+  if (forced) {
+    title.textContent = '🔒 Password Change Required';
+    subtitle.textContent = 'Admin আপনার account বানিয়েছে। নিরাপত্তার জন্য এখনই নতুন password সেট করুন।';
+    cancelBtn.style.display = 'none';
+  } else {
+    title.textContent = 'Change Password';
+    subtitle.textContent = '';
+    cancelBtn.style.display = '';
+  }
+
+  document.getElementById('cp-current').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+  document.getElementById('cp-error').classList.add('hidden');
+  openModal('modal-change-password');
+}
+
+async function savePassword() {
+  const current = document.getElementById('cp-current').value;
+  const newPw = document.getElementById('cp-new').value;
+  const confirm = document.getElementById('cp-confirm').value;
+  const errEl = document.getElementById('cp-error');
+  errEl.classList.add('hidden');
+
+  if (!current || !newPw || !confirm) {
+    errEl.textContent = 'সব fields পূরণ করুন';
+    errEl.classList.remove('hidden'); return;
+  }
+  if (newPw.length < 6) {
+    errEl.textContent = 'New password কমপক্ষে ৬ character হতে হবে';
+    errEl.classList.remove('hidden'); return;
+  }
+  if (newPw !== confirm) {
+    errEl.textContent = 'New password দুটো match করছে না';
+    errEl.classList.remove('hidden'); return;
+  }
+
+  try {
+    await api('/auth/change-password', 'PUT', { current_password: current, new_password: newPw });
+    state.user.must_change_password = 0;
+    closeAllModals();
+    alert('✅ Password সফলভাবে change হয়েছে!');
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.classList.remove('hidden');
+  }
 }
 
 // ========================
@@ -629,6 +689,11 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-comment-btn').addEventListener('click', addComment);
   document.getElementById('detail-edit-btn').addEventListener('click', editTaskFromDetail);
   document.getElementById('detail-delete-btn').addEventListener('click', deleteTaskFromDetail);
+
+  // Change Password
+  document.getElementById('change-pw-btn').addEventListener('click', () => openChangePasswordModal(false));
+  document.getElementById('save-password-btn').addEventListener('click', savePassword);
+  document.getElementById('cp-cancel-btn').addEventListener('click', closeAllModals);
 
   // Users
   document.getElementById('new-user-btn').addEventListener('click', openNewUserModal);

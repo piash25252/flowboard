@@ -283,6 +283,13 @@ body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--te
 /* EMPTY STATE */
 .empty-state { text-align:center;padding:48px 24px;color:var(--text3);font-size:14px; }
 
+.btn-change-pw {
+  background: none; border: none; color: var(--text2); cursor: pointer;
+  font-family: 'Outfit',sans-serif; font-size: 13px; padding: 8px 0;
+  text-align: left; transition: color 0.2s; display: block; width: 100%; margin-bottom: 6px;
+}
+.btn-change-pw:hover { color: var(--accent); }
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .sidebar {
